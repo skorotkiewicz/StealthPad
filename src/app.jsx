@@ -23,14 +23,6 @@ function App() {
     });
   }, []);
 
-  // const gun = Gun();
-  // gun.opt({
-  //   peers: [
-  //     "https://grizzly.de1.hashbang.sh/gun",
-  //     // "https://gun-manhattan.herokuapp.com/gun",
-  //   ],
-  // });
-
   return (
     <html lang="en">
       <head>

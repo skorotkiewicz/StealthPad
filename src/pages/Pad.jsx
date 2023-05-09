@@ -156,7 +156,6 @@ const Pad = ({ action, gun }) => {
             value={value}
             height="80vh"
             extensions={vimMode ? [vim()] : []}
-            // extensions={[javascript({ jsx: true })]}
             onChange={onChange}
           />
         </div>
