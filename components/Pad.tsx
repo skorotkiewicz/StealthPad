@@ -1,35 +1,43 @@
 import { useState, useEffect, useCallback } from "react";
-import { useLocation } from "wouter";
+import { Head, useRouter } from "aleph/react";
 import CodeMirror from "@uiw/react-codemirror";
 import { vim } from "@replit/codemirror-vim";
 import sjcl from "sjcl";
 import md5 from "md5";
-import { useSearchParams } from "../wouter/index.jsx";
-import PassForm from "../components/PassForm.jsx";
-import { decrypt } from "../components/decrypt.js";
+import PassForm from "~/components/PassForm.tsx";
+import { decrypt } from "~/components/decrypt.ts";
+import { useStealth } from "~/context/StealthContext.jsx";
 
-const Pad = ({ action, gun }) => {
+const Pad = () => {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [vimMode, setVimMode] = useState(true);
-  const [location, navigate] = useLocation();
-  const searchParams = useSearchParams();
+  const { url, redirect } = useRouter();
+  const { gun } = useStealth();
+  const searchParams = url.searchParams;
 
-  const desalt = decodeURIComponent(searchParams.get("salt"));
-  const deiv = decodeURIComponent(searchParams.get("iv"));
+  const desalt = decodeURIComponent(searchParams.get("salt") || "null");
+  const deiv = decodeURIComponent(searchParams.get("iv") || "null");
 
-  const onChange = useCallback((value, viewUpdate) => {
+  const action =
+    url.pathname == "/pad/new"
+      ? "new"
+      : url.pathname == "/pad/stealth"
+      ? "pad"
+      : "";
+
+  const onChange = useCallback((value: string) => {
     setValue(value);
   }, []);
 
-  const save = useCallback(async () => {
+  const save = useCallback(() => {
     if (!value) return;
     setLoading(true);
     setError("");
 
-    const encrypt = sjcl.encrypt(password, value);
+    const encrypt: any = sjcl.encrypt(password, value);
     const encrypted = JSON.parse(encrypt);
 
     if (encrypted.ct) {
@@ -38,9 +46,9 @@ const Pad = ({ action, gun }) => {
         .get("StealthPad")
         .get("Pad")
         .get(md5(encrypted.salt))
-        .put(encrypted.ct, (res) => {
+        .put(encrypted.ct, (res: any) => {
           if (res.ok) {
-            navigate(
+            redirect(
               `/pad/stealth?salt=${encodeURIComponent(
                 encrypted.salt
               )}&iv=${encodeURIComponent(encrypted.iv)}`
@@ -51,7 +59,7 @@ const Pad = ({ action, gun }) => {
     }
   }, [value]);
 
-  const setPadPassword = (e) => {
+  const setPadPassword = (e: any) => {
     e.preventDefault();
     const password = e.target[0].value;
 
@@ -65,8 +73,8 @@ const Pad = ({ action, gun }) => {
   const getPad = () => {
     setError("");
 
-    const salt = decodeURIComponent(searchParams.get("salt"));
-    const iv = decodeURIComponent(searchParams.get("iv"));
+    const salt = decodeURIComponent(searchParams.get("salt") || "null");
+    const iv = decodeURIComponent(searchParams.get("iv") || "null");
 
     if (action == "pad" && password && salt && iv) {
       // get pad
@@ -75,7 +83,7 @@ const Pad = ({ action, gun }) => {
         .get("StealthPad")
         .get("Pad")
         .get(md5(salt))
-        .once((data) => {
+        .once((data: string) => {
           console.log("recv data:", data);
           if (data) {
             try {
@@ -110,6 +118,10 @@ const Pad = ({ action, gun }) => {
 
   return (
     <div className="pad">
+      <Head>
+        <title>Create StealthPad</title>
+      </Head>
+
       {(desalt || deiv) != "null" && password && (
         <span className="infoUpdate">
           After each update your have new URL, the old URL is removed.
@@ -134,7 +146,7 @@ const Pad = ({ action, gun }) => {
               <button
                 onClick={() => {
                   setPassword("");
-                  navigate("/pad/new");
+                  redirect("/pad/new");
                 }}
               >
                 New Pad

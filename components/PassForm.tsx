@@ -1,4 +1,11 @@
-const PassForm = ({ setPadPassword, action, error }) => {
+type IPassForm = {
+  action: string;
+  error: string;
+  // deno-lint-ignore no-explicit-any
+  setPadPassword: any;
+};
+
+const PassForm = ({ setPadPassword, action, error }: IPassForm) => {
   return (
     <div>
       <form onSubmit={setPadPassword}>

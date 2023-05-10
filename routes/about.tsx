@@ -1,3 +1,4 @@
+import { Head } from "aleph/react";
 import { useEffect } from "react";
 
 function AboutPage() {
@@ -7,6 +8,10 @@ function AboutPage() {
 
   return (
     <div>
+      <Head>
+        <title>About StealthPad</title>
+      </Head>
+
       <p>
         StealthPad is a secure open-source web application that allows you to
         encrypt your messages and store them in a decentralized way using the
