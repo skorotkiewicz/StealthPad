@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import CodeMirror from "@uiw/react-codemirror";
 import { vim } from "@replit/codemirror-vim";
 import sjcl from "sjcl";
+import md5 from "md5";
 import { useSearchParams } from "../wouter/index.jsx";
 import PassForm from "../components/PassForm.jsx";
 import { decrypt } from "../components/decrypt.js";
@@ -36,7 +37,7 @@ const Pad = ({ action, gun }) => {
       gun.current
         .get("StealthPad")
         .get("Pad")
-        .get(encrypted.iv)
+        .get(md5(encrypted.salt))
         .put(encrypted.ct, (res) => {
           if (res.ok) {
             navigate(
@@ -55,7 +56,7 @@ const Pad = ({ action, gun }) => {
     const password = e.target[0].value;
 
     if (!password) return setError("Your need to set password.");
-    if (password.length <= 6)
+    if (password.length <= 5)
       return setError("Password must have minimum 6 characters.");
 
     return setPassword(password);
@@ -73,7 +74,7 @@ const Pad = ({ action, gun }) => {
       gun.current
         .get("StealthPad")
         .get("Pad")
-        .get(iv)
+        .get(md5(salt))
         .once((data) => {
           console.log("recv data:", data);
           if (data) {
@@ -109,6 +110,12 @@ const Pad = ({ action, gun }) => {
 
   return (
     <div className="pad">
+      {(desalt || deiv) != "null" && password && (
+        <span className="infoUpdate">
+          After each update your have new URL, the old URL is removed.
+        </span>
+      )}
+
       {loading ? (
         <h3>
           <p>Loading...</p>
@@ -132,12 +139,14 @@ const Pad = ({ action, gun }) => {
               >
                 New Pad
               </button>
-              <button onClick={save}>Save Pad</button>
+              <button onClick={save}>
+                {(desalt || deiv) != "null" ? "Update" : "Save"} Pad
+              </button>
 
-              {desalt && deiv && (
+              {(desalt || deiv) != "null" && (
                 <input
                   type="text"
-                  value={`/pad/stealth?salt=${desalt}&iv=${deiv}`}
+                  defaultValue={`/pad/stealth?salt=${desalt}&iv=${deiv}`}
                 />
               )}
 

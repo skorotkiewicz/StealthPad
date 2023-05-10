@@ -71,3 +71,8 @@ nav a.current {
 .pad-nav {
   top: 0;
 }
+
+.infoUpdate {
+  margin-left: 10px;
+  color: #ccc;
+}

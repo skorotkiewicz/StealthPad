@@ -13,6 +13,8 @@
     "@uiw/react-codemirror": "https://esm.sh/@uiw/react-codemirror@4.19.16?external=react",
     "@replit/codemirror-vim": "https://esm.sh/@replit/codemirror-vim@6.0.14?external=react",
 
+    "md5": "https://esm.sh/md5@2.3.0?external=react",
+
     "gun/gun": "https://esm.sh/gun@0.2020.1239/gun",
     "gun/sea": "https://esm.sh/gun@0.2020.1239/sea",
 
