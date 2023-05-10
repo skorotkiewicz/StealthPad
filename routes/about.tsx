@@ -13,9 +13,12 @@ function AboutPage() {
       </Head>
 
       <p>
-        StealthPad is a secure open-source web application that allows you to
-        encrypt your messages and store them in a decentralized way using the
-        GUN.js library.
+        StealthPad is a secure{" "}
+        <a href="https://github.com/skorotkiewicz/StealthPad" target="_blank">
+          open-source
+        </a>{" "}
+        web application that allows you to encrypt your messages and store them
+        in a decentralized way using the GUN.js library.
       </p>
 
       <p>
